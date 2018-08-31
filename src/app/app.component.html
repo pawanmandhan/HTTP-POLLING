@@ -1,0 +1,21 @@
+<h1> RxJS Polling Recipe</h1>
+<p> 
+  Select Cats or Meats and start polling! The Cats option will request random <a href="https://plackitten.com">place kitten</a> images, and the meats option will request random blocks of <a href="https://baconipsum.com/json-api/">bacon-ipsum</a>.
+</p>
+<p> Polling Status: <span id="polling-status"> Stopped </span> </p>
+<div>
+  <label for="catsCheckbox">Cats</label>
+  <input type="radio" name="type" id="catsCheckbox" value="cats" checked />
+  <label for="meatsCheckbox">Meats</label>
+  <input type="radio" name="type" id="meatsCheckbox" value="meats"/>
+</div>
+
+<div>
+  <button id="start">Start polling</button>
+  <button id="stop">Stop polling</button>
+</div>
+
+<img style="max-width: 400px; max-height: 400px;" id="cat" src="https://placekitten.com/g/205/205" alt="incoming cats!"/>
+
+
+<p id="text" style="display: none;">Text Will appear here</p>
