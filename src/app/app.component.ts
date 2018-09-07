@@ -30,7 +30,7 @@ export class AppComponent {
   public catImage: HTMLImageElement;
 
 
-  constructor() {
+  constructor(private http: HttpClient) {
 
   }
 
@@ -66,11 +66,8 @@ export class AppComponent {
     this.text.style.display = "block";
   });
 
-  // Start Polling
   fromEvent(startButton, "click")
-  .pipe(
-    // for demo purposes only
-    tap(_ => this.pollingStatus.innerHTML = "Started"),
+  .pipe(tap(_ => this.pollingStatus.innerHTML = "Started"),
   mergeMap(_ => this.watchForData(this.requestCategory))
   ).subscribe();
 
@@ -130,19 +127,6 @@ export class AppComponent {
     );
   }
 
-  /**
- * This function will begin our polling for the given state, and
- * on the provided interval (defaulting to 5 seconds)
- 4*/
-public startPolling = (category: RequestCategory, interval = 5000): Observable<string> => {
-  const url = category === "cats" ? CATS_URL : MEATS_URL;
-  const mapper = category === "cats" ? this.mapCats : this.mapMeats;
-
-  return timer(0, interval)
-    .pipe(
-      switchMap(_ => this.requestData(url, mapper))
-    );
-}
 
 public updateDom = (result) => {
   if (this.requestCategory === "cats") {
@@ -155,31 +139,18 @@ public updateDom = (result) => {
 
   // 6
 public watchForData = (category: RequestCategory) => {
-  // Start  new Poll
-  return this.startPolling(category, 5000).pipe(
-    tap(this.updateDom),
-    takeUntil(
-      // stop polling on either button click or change of categories
-      merge(
-        this.stopPolling,
-        merge(this.catsClick, this.meatsClick).pipe(filter(c => c !== category))
-      )
-    ),
-    // for demo purposes only
+  const url = category === "cats" ? CATS_URL : MEATS_URL;
+  const mapper = category === "cats" ? this.mapCats : this.mapMeats;
+
+  return timer(0, 5000)
+    .pipe(switchMap(_ => this.requestData(url, mapper)))
+    .pipe(tap(this.updateDom),
+    takeUntil(merge(this.stopPolling, merge(this.catsClick, this.meatsClick).pipe(filter(c => c !== category)))),
     finalize(() => this.pollingStatus.innerHTML = "Stopped")
   );
 }
 
 }
-
-
-
-/*************************
- * Our Operating State
- *************************/
-
-/*************************/
-
 
 
 
